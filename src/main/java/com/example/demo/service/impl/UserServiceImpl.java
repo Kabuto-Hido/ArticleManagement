@@ -114,7 +114,6 @@ public class UserServiceImpl implements UserService {
         Pageable pages = preparePaging(page,limit);
 
         Page<User> users = userRepository.findAll(userSpecification,pages);
-        System.out.println(users);
 
 //        Page<User> users = userRepository.search(keyword, pages);
 

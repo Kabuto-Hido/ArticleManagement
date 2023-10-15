@@ -1,14 +1,14 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.dto.SearchCriteria;
+import com.example.demo.entity.Category;
+import com.example.demo.entity.Post;
 import com.example.demo.entity.User;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.Model;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -93,10 +93,8 @@ public class FiltersSpecificationServiceImpl<T> {
                         predicates.add(between);
                         break;
                     case JOIN:
-                        if(Objects.equals(root.getModel(), User.class)){
-                            Predicate join = criteriaBuilder.equal(root.join("userRole").get(s.getFilterKey()),  s.getValue());
-                            predicates.add(join);
-                        }
+                        Predicate join = criteriaBuilder.equal(root.join(s.getJoinTable()).get(s.getFilterKey()), s.getValue());
+                        predicates.add(join);
                         break;
                     default:
                         throw new IllegalStateException("Unexpected value");

@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.Util.ApplicationUserService;
 import com.example.demo.dto.ListOutputResult;
+import com.example.demo.dto.SearchRequestDTO;
 import com.example.demo.dto.post.PostRequestDTO;
 import com.example.demo.dto.SuccessResponseDTO;
 import com.example.demo.service.PostService;
@@ -112,6 +113,17 @@ public class PostController {
         ListOutputResult result = postService.getPostByCategory(categoryId, status, page, limit);
         if(result.getItemsNumber() == 0L){
             return new ResponseEntity<>(result, HttpStatus.NOT_FOUND);
+        }
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/post/search")
+    public ResponseEntity<?> searchUser(@RequestBody SearchRequestDTO requestDTO,
+            @RequestParam(required = false) String page,
+            @RequestParam(required = false) String limit){
+        ListOutputResult result = postService.searchUser(requestDTO,page,limit);
+        if(result.getItemsNumber() == 0L){
+            return new ResponseEntity<>(result,HttpStatus.NOT_FOUND);
         }
         return ResponseEntity.ok(result);
     }

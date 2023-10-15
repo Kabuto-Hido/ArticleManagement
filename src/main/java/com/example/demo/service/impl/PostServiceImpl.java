@@ -4,6 +4,7 @@ import com.example.demo.Util.ApplicationUserService;
 import com.example.demo.config.FeelingType;
 import com.example.demo.config.GlobalVariable;
 import com.example.demo.dto.ListOutputResult;
+import com.example.demo.dto.SearchRequestDTO;
 import com.example.demo.dto.post.PostRequestDTO;
 import com.example.demo.dto.post.PostResponseDTO;
 import com.example.demo.entity.Category;
@@ -23,6 +24,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -44,7 +46,8 @@ public class PostServiceImpl implements PostService {
     private UserRepository userRepository;
     @Autowired
     private CloudinaryService cloudinaryService;
-
+    @Autowired
+    private FiltersSpecificationServiceImpl<Post> postFiltersSpecificationService;
 
     private Boolean isNumber(String s) {
         try {
@@ -187,6 +190,18 @@ public class PostServiceImpl implements PostService {
         }
         postRepository.deleteById(id);
         return true;
+    }
+
+    @Override
+    public ListOutputResult searchUser(SearchRequestDTO requestDTO, String page, String limit) {
+        Pageable pageable = preparePaging(page,limit);
+
+        Specification<Post> postSpecification = postFiltersSpecificationService
+                .getSearchSpecification(requestDTO.getCriteriaList());
+
+        Page<Post> posts = postRepository.findAll(postSpecification,pageable);
+
+        return resultPaging(posts);
     }
 
     @Override

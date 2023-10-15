@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.dto.ListOutputResult;
+import com.example.demo.dto.SearchRequestDTO;
 import com.example.demo.dto.post.PostRequestDTO;
 import com.example.demo.dto.post.PostResponseDTO;
 import org.springframework.stereotype.Service;
@@ -19,5 +20,5 @@ public interface PostService {
     Boolean changeToApprovedPosts(long id);
     Boolean changeToDenyPosts(long id);
     Boolean delete(long id);
-
+    ListOutputResult searchUser(SearchRequestDTO requestDTO, String page, String limit);
 }
