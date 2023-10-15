@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.dto.ListOutputResult;
+import com.example.demo.dto.SearchRequestDTO;
 import com.example.demo.dto.user.ProfileDTO;
 import com.example.demo.dto.user.UserDTO;
 import com.example.demo.entity.User;
@@ -15,7 +16,7 @@ public interface UserService {
     ListOutputResult getListUser(String pageNumber, String pageSize);
     List<User> fetchAll();
     UserDTO getUserById(long id);
-    ListOutputResult searchUser(String keyword, String page, String limit);
+    ListOutputResult searchUser(/*String keyword*/SearchRequestDTO requestDTO, String page, String limit);
     ProfileDTO findByUsername(String username);
     @Transactional
     ProfileDTO changeProfile(ProfileDTO profileDTO, String username);

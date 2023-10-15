@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import com.example.demo.Util.ApplicationUser;
 import com.example.demo.Util.ApplicationUserService;
 import com.example.demo.dto.ListOutputResult;
+import com.example.demo.dto.SearchRequestDTO;
 import com.example.demo.dto.user.ProfileDTO;
 import com.example.demo.dto.SuccessResponseDTO;
 import com.example.demo.dto.user.UserDTO;
@@ -80,10 +81,11 @@ public class UserController {
     }
 
     @GetMapping("/user/search")
-    public ResponseEntity<?> searchUser(@RequestParam String keyword,
+    public ResponseEntity<?> searchUser(/*@RequestParam String keyword,*/
+                                        @RequestBody SearchRequestDTO requestDTO,
                                         @RequestParam(required = false) String page,
                                         @RequestParam(required = false) String limit){
-        ListOutputResult result = userService.searchUser(keyword,page,limit);
+        ListOutputResult result = userService.searchUser(requestDTO,page,limit);
         if(result.getItemsNumber() == 0L){
             return new ResponseEntity<>(result,HttpStatus.NOT_FOUND);
         }

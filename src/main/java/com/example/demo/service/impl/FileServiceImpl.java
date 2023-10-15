@@ -1,14 +1,13 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.config.GlobalVariable;
-import com.example.demo.entity.Post;
 import com.example.demo.entity.Role;
 import com.example.demo.entity.User;
 import com.example.demo.repository.RoleRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.FileService;
-import com.lowagie.text.*;
 import com.lowagie.text.Font;
+import com.lowagie.text.*;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
@@ -186,7 +185,7 @@ public class FileServiceImpl implements FileService {
     private List<User> readDataFromCsvFile(InputStream inputStream){
         try(BufferedReader fileReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
             CSVParser csvParser = new CSVParser(fileReader,
-                    CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim());) {
+                    CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim())) {
             Role roleUser = roleRepository.findById(Long.parseLong("2"))
                     .orElseThrow(() -> new UsernameNotFoundException("Not found")); //Lấy ROLE_USER
 

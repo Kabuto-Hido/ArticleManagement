@@ -1,8 +1,8 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.config.GlobalVariable;
-import com.example.demo.dto.category.CategoryDTO;
 import com.example.demo.dto.ListOutputResult;
+import com.example.demo.dto.category.CategoryDTO;
 import com.example.demo.entity.Category;
 import com.example.demo.exception.BadRequest;
 import com.example.demo.exception.NotFoundException;
@@ -34,7 +34,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     private Boolean isValidNumber(String num) {
-        return num != null && !num.equals("") && isNumber(num) && Long.parseLong(num) >= 0;
+        return num != null && !num.isEmpty() && isNumber(num) && Long.parseLong(num) >= 0;
     }
 
     @Override
@@ -64,57 +64,55 @@ public class CategoryServiceImpl implements CategoryService {
         return CategoryMapper.toDto(category);
     }
 
-    @Override
-    public ListOutputResult findAll(String page, String limit) {
-        limit = (!isValidNumber(limit)) ? GlobalVariable.DEFAULT_LIMIT_USER : limit;
-        page = (!isValidNumber(page)) ? GlobalVariable.DEFAULT_PAGE : page;
-
-        Pageable pages = PageRequest.of((Integer.parseInt(page) - 1),Integer.parseInt(limit),
+    public Pageable preparePaging(String page, String limit){
+        limit = isValidNumber(limit) ? limit : GlobalVariable.DEFAULT_LIMIT_USER;
+        page = isValidNumber(page) ? page : GlobalVariable.DEFAULT_PAGE;
+        return PageRequest.of((Integer.parseInt(page) - 1),Integer.parseInt(limit),
                 Sort.by(Sort.Direction.DESC, "createdDate"));
+    }
 
+    public ListOutputResult resultPaging(Page<Category> categories){
         List<CategoryDTO> categoryDTOS = new ArrayList<>();
-        Page<Category> categories = categoryRepository.findAll(pages);
         for(Category category : categories){
             categoryDTOS.add(CategoryMapper.toDto(category));
         }
 
-        if (categories.isEmpty()) {
-            return new ListOutputResult(0,0, new ArrayList<>());
-        }
+        ListOutputResult result = new ListOutputResult(0,0,null,null, new ArrayList<>());
+        if(!categories.isEmpty()) {
+            long ItemsNumber = categories.getTotalElements();
+            long totalPage = categories.getTotalPages();
+            result.setList(categoryDTOS);
+            result.setTotalPage(totalPage);
+            result.setItemsNumber(ItemsNumber);
 
-        ListOutputResult result = new ListOutputResult();
-        result.setList(categoryDTOS);
-        result.setTotalPage(categories.getTotalPages());
-        result.setItemsNumber(categories.getTotalElements());
+            if (categories.hasNext()) {
+                result.setNextPage((long) categories.nextPageable().getPageNumber() + 1);
+            }
+            if (categories.hasPrevious()) {
+                result.setPreviousPage((long) categories.previousPageable().getPageNumber() + 1);
+            }
+        }
         return result;
+    }
+    @Override
+    public ListOutputResult findAll(String page, String limit) {
+        Pageable pages = preparePaging(page,limit);
+
+        Page<Category> categories = categoryRepository.findAll(pages);
+
+        return resultPaging(categories);
     }
 
     @Override
     public ListOutputResult searchCategory(String keyword, String page, String limit) {
         if(keyword == null){
-            throw new BadRequest("Please enter valid "+ keyword);
+            throw new BadRequest("Please enter valid keyword!");
         }
 
-        limit = (!isValidNumber(limit)) ? GlobalVariable.DEFAULT_LIMIT_SEARCH : limit;
-        page = (!isValidNumber(page)) ? GlobalVariable.DEFAULT_PAGE : page;
-        Pageable pages = PageRequest.of((Integer.parseInt(page) - 1),Integer.parseInt(limit),
-                Sort.by(Sort.Direction.DESC, "createdDate"));
+        Pageable pages = preparePaging(page,limit);
 
-        List<CategoryDTO> categoryDTOS = new ArrayList<>();
         Page<Category> categories = categoryRepository.search(keyword, pages);
 
-        for(Category category : categories){
-            categoryDTOS.add(CategoryMapper.toDto(category));
-        }
-
-        if (categories.isEmpty()) {
-            return new ListOutputResult(0,0, new ArrayList<>());
-        }
-
-        ListOutputResult result = new ListOutputResult();
-        result.setList(categoryDTOS);
-        result.setTotalPage(categories.getTotalPages());
-        result.setItemsNumber(categories.getTotalElements());
-        return result;
+        return resultPaging(categories);
     }
 }

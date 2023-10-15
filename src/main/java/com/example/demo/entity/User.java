@@ -56,7 +56,7 @@ public class User extends BaseEntity{
     @Column(name="status")
     private String status = "Active";
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "userRole", nullable = false, referencedColumnName = "id")
     private Role userRole;

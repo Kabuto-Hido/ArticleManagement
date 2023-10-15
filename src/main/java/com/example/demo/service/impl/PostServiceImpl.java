@@ -56,7 +56,7 @@ public class PostServiceImpl implements PostService {
     }
 
     private Boolean isValidNumber(String num) {
-        return num != null && !num.equals("") && isNumber(num) && Long.parseLong(num) >= 0;
+        return num != null && !num.isEmpty() && isNumber(num) && Long.parseLong(num) >= 0;
     }
 
     @Override
@@ -207,8 +207,8 @@ public class PostServiceImpl implements PostService {
     }
 
     public Pageable preparePaging(String page, String limit){
-        limit = (!isValidNumber(limit)) ? GlobalVariable.DEFAULT_LIMIT_SEARCH : limit;
-        page = (!isValidNumber(page)) ? GlobalVariable.DEFAULT_PAGE : page;
+        limit = isValidNumber(limit) ? limit : GlobalVariable.DEFAULT_LIMIT_SEARCH;
+        page = isValidNumber(page) ? page : GlobalVariable.DEFAULT_PAGE;
         return PageRequest.of((Integer.parseInt(page) - 1),Integer.parseInt(limit),
                 Sort.by(Sort.Direction.DESC, "createdDate"));
     }
@@ -222,14 +222,21 @@ public class PostServiceImpl implements PostService {
             postResponseDTO.setDislikes(prettyCount(amountDislike));
             postResponseDTOS.add(postResponseDTO);
         }
-        if (posts.isEmpty()) {
-            return new ListOutputResult(0,0, new ArrayList<>());
+        ListOutputResult result = new ListOutputResult(0, 0, null,null,new ArrayList<>());
+        if (!posts.isEmpty()) {
+            result.setList(postResponseDTOS);
+            result.setTotalPage(posts.getTotalPages());
+            result.setItemsNumber(posts.getTotalElements());
+
+            if(posts.hasNext()){
+                result.setNextPage((long) posts.nextPageable().getPageNumber() + 1);
+            }
+            if(posts.hasPrevious()){
+                result.setPreviousPage((long) posts.previousPageable().getPageNumber() + 1);
+            }
         }
-        ListOutputResult result = new ListOutputResult();
-        result.setList(postResponseDTOS);
-        result.setTotalPage(posts.getTotalPages());
-        result.setItemsNumber(posts.getTotalElements());
         return result;
+
     }
 
     public String prettyCount(Number number) {

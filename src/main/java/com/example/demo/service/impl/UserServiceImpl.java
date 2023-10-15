@@ -2,6 +2,7 @@ package com.example.demo.service.impl;
 
 import com.example.demo.config.GlobalVariable;
 import com.example.demo.dto.ListOutputResult;
+import com.example.demo.dto.SearchRequestDTO;
 import com.example.demo.dto.user.ProfileDTO;
 import com.example.demo.dto.user.UserDTO;
 import com.example.demo.entity.User;
@@ -17,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -33,6 +35,8 @@ public class UserServiceImpl implements UserService {
     private RoleRepository roleRepository;
     @Autowired
     private CloudinaryService cloudinaryService;
+    @Autowired
+    private FiltersSpecificationServiceImpl<User> userFiltersSpecificationService;
 
     private Boolean isNumber(String s) {
         try {
@@ -44,32 +48,47 @@ public class UserServiceImpl implements UserService {
     }
 
     private Boolean isValidNumber(String num) {
-        return num != null && !num.equals("") && isNumber(num) && Long.parseLong(num) >= 0;
+        return num != null && !num.isEmpty() && isNumber(num) && Long.parseLong(num) >= 0;
+    }
+
+    public Pageable preparePaging(String pageNumber, String pageSize){
+        pageSize = isValidNumber(pageSize) ? pageSize : GlobalVariable.DEFAULT_LIMIT_USER;
+        pageNumber = isValidNumber(pageNumber) ? pageNumber : GlobalVariable.DEFAULT_PAGE;
+
+        return PageRequest.of((Integer.parseInt(pageNumber) - 1),Integer.parseInt(pageSize),
+                Sort.by(Sort.Direction.DESC, "createdDate"));
+    }
+
+    public ListOutputResult resultPaging(List<?> listUser, Page<User> users){
+        ListOutputResult result = new ListOutputResult(0, 0,null,null, new ArrayList<>());
+        if (!listUser.isEmpty()) {
+            result.setList(listUser);
+            result.setTotalPage(users.getTotalPages());
+            result.setItemsNumber(users.getTotalElements());
+
+            if(users.hasNext()){
+                result.setNextPage((long) users.nextPageable().getPageNumber() + 1);
+            }
+            if(users.hasPrevious()){
+                result.setPreviousPage((long) users.previousPageable().getPageNumber() + 1);
+            }
+        }
+        return result;
     }
 
     @Override
     public ListOutputResult getListUser(String pageNumber, String pageSize) {
-        pageSize = (!isValidNumber(pageSize)) ? GlobalVariable.DEFAULT_LIMIT_USER : pageSize;
-        pageNumber = (!isValidNumber(pageNumber)) ? GlobalVariable.DEFAULT_PAGE : pageNumber;
+        Pageable pages = preparePaging(pageNumber,pageSize);
 
-        Pageable pages = PageRequest.of((Integer.parseInt(pageNumber) - 1),Integer.parseInt(pageSize),
-                Sort.by(Sort.Direction.DESC, "createdDate"));
+        Page<User> users = userRepository.findAll(pages);
 
         List<UserDTO> userDTOS = new ArrayList<>();
-        Page<User> users = userRepository.findAll(pages);
         for(User user : users){
             userDTOS.add(UserMapper.toUserDto(user));
         }
 
-        if (users.isEmpty()) {
-            return new ListOutputResult(0,0, new ArrayList<>());
-        }
+        return resultPaging(userDTOS, users);
 
-        ListOutputResult result = new ListOutputResult();
-        result.setList(userDTOS);
-        result.setTotalPage(users.getTotalPages());
-        result.setItemsNumber(users.getTotalElements());
-        return result;
     }
 
     @Override
@@ -84,32 +103,29 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ListOutputResult searchUser(String keyword, String page, String limit) {
-        if(keyword == null){
-            throw new BadRequest("Please enter valid "+ keyword);
-        }
+    public ListOutputResult searchUser(SearchRequestDTO requestDTO, String page, String limit) {
+//        if(keyword == null){
+//            throw new BadRequest("Please enter valid keyword");
+//        }
 
-        limit = (!isValidNumber(limit)) ? GlobalVariable.DEFAULT_LIMIT_SEARCH : limit;
-        page = (!isValidNumber(page)) ? GlobalVariable.DEFAULT_PAGE : page;
-        Pageable pages = PageRequest.of((Integer.parseInt(page) - 1),Integer.parseInt(limit),
-                Sort.by(Sort.Direction.DESC, "createdDate"));
+        Specification<User> userSpecification = userFiltersSpecificationService
+                .getSearchSpecification(requestDTO.getCriteriaList());
+
+        Pageable pages = preparePaging(page,limit);
+
+        Page<User> users = userRepository.findAll(userSpecification,pages);
+        System.out.println(users);
+
+//        Page<User> users = userRepository.search(keyword, pages);
 
         List<ProfileDTO> profileDTOS = new ArrayList<>();
-        Page<User> users = userRepository.search(keyword, pages);
 
-        for(User user : users){
+        for(User user : users) {
             profileDTOS.add(UserMapper.toProfileDto(user));
         }
 
-        if (users.isEmpty()) {
-            return new ListOutputResult(0,0, new ArrayList<>());
-        }
+        return resultPaging(profileDTOS, users);
 
-        ListOutputResult result = new ListOutputResult();
-        result.setList(profileDTOS);
-        result.setTotalPage(users.getTotalPages());
-        result.setItemsNumber(users.getTotalElements());
-        return result;
     }
 
     @Override
@@ -219,7 +235,7 @@ public class UserServiceImpl implements UserService {
     }
 
     Boolean checkValidValue(String newValue, String oldValue){
-        return newValue != null && newValue.length() > 0 &&
+        return newValue != null && !newValue.isEmpty() &&
                 !Objects.equals(newValue, oldValue);
     }
 }

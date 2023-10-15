@@ -1,5 +1,6 @@
 package com.example.demo.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -51,9 +52,10 @@ public class Post extends BaseEntity{
     @JoinColumn(name = "categoryId", nullable = false, referencedColumnName = "id")
     private Category categoryId;
 
-    @OneToMany(mappedBy = "postId", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "postId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Feeling> postFeelings;
 
-    @OneToMany(mappedBy = "postId", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    @OneToMany(mappedBy = "postId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Comment> postComments;
 }

@@ -11,11 +11,6 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ListOutputResult {
-    private long itemsNumber;
-    private long totalPage;
-    private Long previousPage;
-    private Long nextPage;
-    private List<?> List;
-
+public class SearchRequestDTO {
+    List<SearchCriteria> criteriaList;
 }
