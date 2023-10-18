@@ -48,12 +48,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return provider;
     }
 
-
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable().authorizeRequests()
                 .antMatchers("/","/register","/login","/category/**","/post/**","/test/**",
-                        "/comment/get-all","/comment/getBy","user/search").permitAll()
+                        "/comment/get-all","/comment/getBy","/user/search", "/v2/api-docs",
+                        "/swagger-resources",
+                        "/swagger-resources/**",
+                        "/configuration/ui",
+                        "/configuration/security",
+                        "/swagger-ui.html",
+                        "/webjars/**").permitAll()
                 .antMatchers("/user/profile","/user/changeProfile","/user/avatar",
                         "/post/createNew","/post/update/**").hasAnyRole(ADMIN.name(), USER.name())
                 .antMatchers("/admin/**").hasRole(ADMIN.name())
