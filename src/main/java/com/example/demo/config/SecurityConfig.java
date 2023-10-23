@@ -58,7 +58,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/configuration/ui",
                         "/configuration/security",
                         "/swagger-ui.html",
-                        "/webjars/**").permitAll()
+                        "/webjars/**",
+                        "/vnpay/**").permitAll()
                 .antMatchers("/user/profile","/user/changeProfile","/user/avatar",
                         "/post/createNew","/post/update/**").hasAnyRole(ADMIN.name(), USER.name())
                 .antMatchers("/admin/**").hasRole(ADMIN.name())
