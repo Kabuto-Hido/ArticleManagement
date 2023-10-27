@@ -30,4 +30,5 @@ public interface UserService {
     void sendEmailToActivatedAccount(String addressGmail, String username) throws MessagingException;
     String confirmToken(String token);
     void changeUserPasswordByEmail(String newPassword, String email);
+    //void changeTypeAccount();
 }

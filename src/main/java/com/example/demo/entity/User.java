@@ -1,12 +1,12 @@
 package com.example.demo.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -18,7 +18,6 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Component
 
 @Entity
 @Table(name = "users")
@@ -61,13 +60,25 @@ public class User extends BaseEntity{
     @JoinColumn(name = "userRole", nullable = false, referencedColumnName = "id")
     private Role userRole;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinColumn(name = "userType", nullable = false, referencedColumnName = "id")
+    private TypeAccount userType;
+
     @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private List<Order> userOrders;
+
+    @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<Post> userPosts;
 
     @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<Feeling> userFeelings;
 
     @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<Comment> userComments;
 
 }

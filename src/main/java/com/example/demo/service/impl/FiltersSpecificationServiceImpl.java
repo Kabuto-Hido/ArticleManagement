@@ -1,17 +1,19 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.dto.SearchCriteria;
-import com.example.demo.entity.Category;
-import com.example.demo.entity.Post;
-import com.example.demo.entity.User;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import org.springframework.ui.Model;
 
-import javax.persistence.criteria.*;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 
 @Service
 public class FiltersSpecificationServiceImpl<T> {

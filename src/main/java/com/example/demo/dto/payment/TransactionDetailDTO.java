@@ -1,5 +1,6 @@
 package com.example.demo.dto.payment;
 
+import com.example.demo.dto.order.OrderDTO;
 import lombok.*;
 
 @Setter
@@ -8,7 +9,7 @@ import lombok.*;
 @NoArgsConstructor
 @ToString
 public class TransactionDetailDTO {
-    private String orderId;
+    private OrderDTO order;
     private String amount;
     private String bankCode;
     private String description;

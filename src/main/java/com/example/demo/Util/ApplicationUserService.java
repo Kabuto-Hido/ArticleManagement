@@ -3,12 +3,15 @@ package com.example.demo.Util;
 import com.example.demo.config.EmailTemplate;
 import com.example.demo.dto.user.UserDTO;
 import com.example.demo.entity.Role;
+import com.example.demo.entity.TypeAccount;
 import com.example.demo.entity.User;
 import com.example.demo.exception.BadRequest;
 import com.example.demo.mapper.UserMapper;
 import com.example.demo.repository.RoleRepository;
+import com.example.demo.repository.TypeAccountRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.EmailService;
+import com.example.demo.service.TypeAccountService;
 import com.example.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -37,7 +40,7 @@ public class ApplicationUserService implements UserDetailsService {
     @Autowired
     private UserService userService;
     @Autowired
-    private JwtUtil jwtUtil;
+    private TypeAccountService typeAccountService;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -81,6 +84,9 @@ public class ApplicationUserService implements UserDetailsService {
         newUser.setPassword(passwordEncoder.encode(newUser.getPassword())); //Bcrypt password tk
         newUser.setUserRole(roleUser);
         newUser.setGender("3");
+
+        TypeAccount regularAcc = typeAccountService.getTypeByName("Regular");
+        newUser.setUserType(regularAcc);
 
         //newUser.setFullName("Unname#" + GlobalVariable.GetOTP());
         userRepository.save(newUser);

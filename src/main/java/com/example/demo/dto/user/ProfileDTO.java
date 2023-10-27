@@ -19,4 +19,5 @@ public class ProfileDTO extends BaseEntity {
     private String username;
     private String status;
     private String role;
+    private String accountType;
 }

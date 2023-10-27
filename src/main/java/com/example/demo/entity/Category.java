@@ -1,11 +1,9 @@
 package com.example.demo.entity;
 
-import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -15,10 +13,8 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Component
 
 @Entity
-@ApiModel(value = "Category", description = "The category of article")
 @Table(name = "category")
 public class Category extends BaseEntity{
     @Id

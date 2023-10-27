@@ -1,10 +1,15 @@
 package com.example.demo.service.impl;
 
+import com.example.demo.config.GlobalVariable;
 import com.example.demo.config.VNPayConfig;
+import com.example.demo.dto.order.OrderDTO;
 import com.example.demo.dto.payment.TransactionDTO;
 import com.example.demo.dto.payment.TransactionDetailDTO;
 import com.example.demo.dto.payment.VNPaymentRequestDTO;
+import com.example.demo.entity.Order;
+import com.example.demo.service.OrderService;
 import com.example.demo.service.PaymentService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
@@ -16,9 +21,11 @@ import java.util.*;
 
 @Component
 public class PaymentServiceImpl implements PaymentService {
+    @Autowired
+    private OrderService orderService;
     @Override
     public Map<String, String> returnParamVnPay(VNPaymentRequestDTO paymentRequestDTO) {
-        int amount = paymentRequestDTO.getAmount() * 100;
+        int amount = GlobalVariable.VN_Price * 100;
         String orderID = String.valueOf(paymentRequestDTO.getOrderId());//VNPayConfig.getRandomNumber(8);
 
         Map<String, String> vnp_Params = new HashMap<>();
@@ -81,22 +88,31 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public TransactionDTO resultTransaction(HttpServletRequest request) {
+        long orderId = Long.parseLong(request.getParameter("vnp_TxnRef"));
         String transactionStatus = request.getParameter("vnp_TransactionStatus");
         TransactionDTO transactionDTO = new TransactionDTO();
         if (transactionStatus.equals("00")) {
             transactionDTO.setStatus("OK");
             transactionDTO.setMessage("Successfully");
 
+            OrderDTO successOrder = orderService.changeStatusOrder(orderId,
+                    GlobalVariable.ORDER_STATUS.PAYMENT_CONFIRM.name());
+
             TransactionDetailDTO detail = new TransactionDetailDTO();
             detail.setAmount(request.getParameter("vnp_Amount"));
             detail.setBankCode(request.getParameter("vnp_BankCode"));
             detail.setDescription(request.getParameter("vnp_OrderInfo"));
             detail.setPayDate(request.getParameter("vnp_PayDate"));
-            detail.setOrderId(request.getParameter("vnp_TxnRef"));
+            detail.setOrder(successOrder);
             detail.setCardType(request.getParameter("vnp_CardType"));
 
             transactionDTO.setDetail(detail);
+
+
         } else {
+
+            OrderDTO successOrder = orderService.changeStatusOrder(orderId,
+                    GlobalVariable.ORDER_STATUS.CANCELED.name());
             transactionDTO.setStatus("NO");
             transactionDTO.setMessage("Failed");
         }

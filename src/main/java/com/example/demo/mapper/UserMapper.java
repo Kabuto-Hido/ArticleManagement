@@ -20,6 +20,7 @@ public class UserMapper {
         userDTO.setCreatedDate(user.getCreatedDate());
         userDTO.setModifiedDate(user.getModifiedDate());
         userDTO.setStatus(user.getStatus());
+        userDTO.setAccountType(user.getUserType().getTypename());
         return userDTO;
     }
 
@@ -35,6 +36,7 @@ public class UserMapper {
         profileDTO.setCreatedDate(user.getCreatedDate());
         profileDTO.setModifiedDate(user.getModifiedDate());
         profileDTO.setStatus(user.getStatus());
+        profileDTO.setAccountType(user.getUserType().getTypename());
         return profileDTO;
     }
 

@@ -9,6 +9,6 @@ import lombok.*;
 @ToString
 public class VNPaymentRequestDTO {
     private long orderId;
-    private int amount;
+//    private int amount;
     private String bankCode;
 }
