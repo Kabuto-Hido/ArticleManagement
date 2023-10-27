@@ -1,5 +1,8 @@
 package com.example.demo.service.impl;
 
+import com.example.demo.Util.ApplicationUser;
+import com.example.demo.Util.JwtUtil;
+import com.example.demo.config.EmailTemplate;
 import com.example.demo.config.GlobalVariable;
 import com.example.demo.dto.ListOutputResult;
 import com.example.demo.dto.SearchRequestDTO;
@@ -12,6 +15,7 @@ import com.example.demo.mapper.UserMapper;
 import com.example.demo.repository.RoleRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.CloudinaryService;
+import com.example.demo.service.EmailService;
 import com.example.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -19,9 +23,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.mail.MessagingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -35,6 +43,10 @@ public class UserServiceImpl implements UserService {
     private RoleRepository roleRepository;
     @Autowired
     private CloudinaryService cloudinaryService;
+    @Autowired
+    private EmailService emailService;
+    @Autowired
+    private JwtUtil jwtUtil;
     @Autowired
     private FiltersSpecificationServiceImpl<User> userFiltersSpecificationService;
 
@@ -137,6 +149,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User findByEmailAndStatus(String email, String status) {
+        return userRepository.findFirstByEmailAndStatus(email,status);
+    }
+
+    @Override
     public ProfileDTO changeProfile(ProfileDTO profileDTO, String username) {
         User changeProfileUser = userRepository.findByUsername(username)
                 .orElseThrow(() -> new NotFoundException("Cannot found user with username = " + username));
@@ -231,6 +248,29 @@ public class UserServiceImpl implements UserService {
     @Override
     public User findFirstByUsername(String username) {
         return userRepository.findFirstByUsername(username);
+    }
+
+    @Override
+    public void sendEmailToActivatedAccount(String addressGmail, String username) throws MessagingException {
+        final String token = jwtUtil.generateEmailToken(addressGmail);
+        String link = "http://localhost:8081/confirm?token="+token;
+        emailService.sendAsHTML(addressGmail,
+                "Authenticate gmail for account " + username,
+                EmailTemplate.TemplateCheckValidEmail(username, link));
+    }
+    @Transactional
+    @Override
+    public String confirmToken(String token) {
+        if(jwtUtil.isTokenExpired(token)){
+            throw new BadRequest("Token expired");
+        }
+        String email = jwtUtil.extractUsername(token);
+        User userConfirm = userRepository.findFirstByEmailAndStatus(email,"Active");
+        if(userConfirm != null){
+            throw new BadRequest("Email already exist");
+        }
+        userRepository.activateAccount(email);
+        return "Account has been activated";
     }
 
     Boolean checkValidValue(String newValue, String oldValue){

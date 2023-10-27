@@ -35,7 +35,7 @@ public class JwtUtil {
         return Jwts.parser().setSigningKey(jwtConfig.getSecretKey()).parseClaimsJws(token).getBody();
     }
 
-    private Boolean isTokenExpired(String token) {
+    public Boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
     }
 
@@ -44,9 +44,23 @@ public class JwtUtil {
         return createToken(claims, username);
     }
 
+    public String generateEmailToken(String username) {
+        Map<String, Object> claims = new HashMap<>();
+        return createEmailToken(claims, username);
+    }
+
     private String createToken(Map<String, Object> claims, String subject) {
         Calendar c = Calendar.getInstance();
         c.add(Calendar.DATE, jwtConfig.getTokenExpirationAfterDays());
+        Date expDate = c.getTime();
+        return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(expDate)
+                .signWith(SignatureAlgorithm.HS256, jwtConfig.getSecretKey()).compact();
+    }
+
+    private String createEmailToken(Map<String, Object> claims, String subject) {
+        Calendar c = Calendar.getInstance();
+        c.add(Calendar.MINUTE, jwtConfig.getTokenExpirationAfterMinutes());
         Date expDate = c.getTime();
         return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(expDate)

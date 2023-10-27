@@ -54,7 +54,7 @@ public class User extends BaseEntity{
     private String gender;
 
     @Column(name="status")
-    private String status = "Active";
+    private String status = "Not Active";
 
     @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)

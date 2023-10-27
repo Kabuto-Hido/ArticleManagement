@@ -7,6 +7,7 @@ import com.example.demo.dto.auth.AuthResponse;
 import com.example.demo.dto.SuccessResponseDTO;
 import com.example.demo.dto.user.UserDTO;
 import com.example.demo.entity.User;
+import com.example.demo.exception.BadRequest;
 import com.example.demo.service.UserService;
 import org.apache.http.client.utils.URIBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.mail.MessagingException;
 import java.net.URISyntaxException;
 import java.util.Set;
 
@@ -41,7 +43,7 @@ public class AuthenticationController {
         ResponseEntity<?> saveResult = applicationUserService.save(user);
         if(saveResult.getStatusCode() == HttpStatus.OK) {
             return ResponseEntity.ok(new SuccessResponseDTO(HttpStatus.OK,
-                    "Create account with user " + user.getUsername() + " successful"));
+                    "Create account successful! Please check your email to activated your account!"));
         } else {
             return ResponseEntity.badRequest().body(saveResult.getBody());
         }
@@ -67,6 +69,27 @@ public class AuthenticationController {
                         (Set<GrantedAuthority>) userDetails.getAuthorities()));
 
     }
+
+    @GetMapping("/confirm")
+    public String activatedAccount(@RequestParam("token") String token) {
+        return userService.confirmToken(token);
+    }
+
+    @GetMapping("/sendEmail/activate")
+    public Object sendActivatedLinkToEmail(@RequestParam String email) {
+        User user = userService.findByEmailAndStatus(email,"Not Active");
+        if(user == null){
+            return ResponseEntity.badRequest().body("Your email is not registered or has already been used.");
+        }
+        try {
+            userService.sendEmailToActivatedAccount(email,user.getUsername());
+        } catch (MessagingException e) {
+            throw new BadRequest("Gmail send fail");
+        }
+        return ResponseEntity.ok(new SuccessResponseDTO(HttpStatus.OK,
+                "Send email successful! Please check your email to activated your account!"));
+    }
+
 
     @GetMapping("/")
     public ModelAndView home(@RequestParam(value = "jwt") String jwtToken) throws URISyntaxException {

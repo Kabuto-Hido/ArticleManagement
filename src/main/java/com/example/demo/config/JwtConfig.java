@@ -10,6 +10,16 @@ public class JwtConfig {
     private String tokenPrefix;
     private Integer tokenExpirationAfterDays;
 
+    public Integer getTokenExpirationAfterMinutes() {
+        return tokenExpirationAfterMinutes;
+    }
+
+    public void setTokenExpirationAfterMinutes(Integer tokenExpirationAfterMinutes) {
+        this.tokenExpirationAfterMinutes = tokenExpirationAfterMinutes;
+    }
+
+    private Integer tokenExpirationAfterMinutes;
+
     public JwtConfig() {
     }
 
