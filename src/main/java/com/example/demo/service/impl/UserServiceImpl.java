@@ -1,6 +1,5 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.Util.ApplicationUser;
 import com.example.demo.Util.JwtUtil;
 import com.example.demo.config.EmailTemplate;
 import com.example.demo.config.GlobalVariable;
@@ -23,8 +22,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -47,6 +45,9 @@ public class UserServiceImpl implements UserService {
     private EmailService emailService;
     @Autowired
     private JwtUtil jwtUtil;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @Autowired
     private FiltersSpecificationServiceImpl<User> userFiltersSpecificationService;
 
@@ -271,6 +272,15 @@ public class UserServiceImpl implements UserService {
         }
         userRepository.activateAccount(email);
         return "Account has been activated";
+    }
+
+    @Override
+    public void changeUserPasswordByEmail(String newPassword, String email) {
+        userRepository.findByEmail(email)
+                .map(user -> {
+                    user.setPassword(passwordEncoder.encode(newPassword));
+                    return userRepository.save(user);
+                }).orElseThrow(() -> new NotFoundException("Cannot found user with email = " + email));
     }
 
     Boolean checkValidValue(String newValue, String oldValue){

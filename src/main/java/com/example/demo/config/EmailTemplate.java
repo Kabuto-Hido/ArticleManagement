@@ -45,13 +45,13 @@ public class EmailTemplate {
                 "                                </tr>\n" +
                 "                                <tr>\n" +
                 "                                    <td style=\"padding:0 35px;\">\n" +
-                "                                        <h1 style=\"color:#1e1e2d; font-weight:500; margin:0;font-size:32px;font-family:'Rubik',sans-serif;\">Bạn đã\n" +
-                "                                            yêu cầu thay đổi mật khẩu tài khoản " + username + "</h1>\n" +
+                "                                        <h1 style=\"color:#1e1e2d; font-weight:500; margin:0;font-size:32px;font-family:'Rubik',sans-serif;\">You have\n" +
+                "                                            requested to change your account password " + username + "</h1>\n" +
                 "                                        <span\n" +
                 "                                            style=\"display:inline-block; vertical-align:middle; margin:29px 0 26px; border-bottom:1px solid #cecece; width:100px;\"></span>\n" +
                 "                                        <p style=\"color:#455056; font-size:15px;line-height:24px; margin:0;\">\n" +
-                "                                            Bạn đã yêu cầu thay đổi mật khẩu cho " + username + "\n" + "<br>" +
-                "                                            Hãy sử dụng OTP này để xác thực: \n" +
+                "                                            You have requested to change your account password for " + username + "\n" + "<br>" +
+                "                                            Please use this OTP for authentication: \n" +
                 "                                        </p>\n" +
                 "                                        <a \n" +
                 "                                            style=\"background:#20e277;text-decoration:none !important; font-weight:500; margin-top:35px; color:#fff;text-transform:uppercase; font-size:14px;padding:10px 24px;display:inline-block;border-radius:50px;\">" + otp +
@@ -101,7 +101,7 @@ public class EmailTemplate {
                 "                  \n" +
                 "                    </td>\n" +
                 "                    <td style=\"font-size:28px;line-height:1.315789474;Margin-top:4px;padding-left:10px\">\n" +
-                "                      <span style=\"font-family:Helvetica,Arial,sans-serif;font-weight:700;color:#ffffff;text-decoration:none;vertical-align:top;display:inline-block\">Confirm to be a part of us</span>\n" +
+                "                      <span style=\"font-family:Helvetica,Arial,sans-serif;font-weight:700;color:#ffffff;text-decoration:none;vertical-align:top;display:inline-block\">Confirm to be a part of JD</span>\n" +
                 "                    </td>\n" +
                 "                  </tr>\n" +
                 "                </tbody></table>\n" +

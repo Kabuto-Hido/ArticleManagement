@@ -29,4 +29,5 @@ public interface UserService {
     User findFirstByUsername(String username);
     void sendEmailToActivatedAccount(String addressGmail, String username) throws MessagingException;
     String confirmToken(String token);
+    void changeUserPasswordByEmail(String newPassword, String email);
 }
