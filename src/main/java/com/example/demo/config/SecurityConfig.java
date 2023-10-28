@@ -17,6 +17,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.access.channel.ChannelProcessingFilter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
 import static com.example.demo.config.ApplicationUserRole.*;
 
 @Configuration
@@ -51,21 +52,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable().authorizeRequests()
-                .antMatchers("/","/register","/login","/category/**","/post/**","/test/**",
-                        "/comment/get-all","/comment/getBy","/user/search", "/v2/api-docs",
+                .antMatchers("/", "/register", "/login", "/category/**", "/post/**", "/test/**",
+                        "/comment/get-all", "/comment/getBy", "/user/search", "/v2/api-docs",
                         "/swagger-resources",
                         "/swagger-resources/**",
                         "/configuration/ui",
                         "/configuration/security",
                         "/swagger-ui.html",
                         "/webjars/**",
-                        "/vnpay/payment-detail","/confirm/**","/sendEmail/**",
-                        "/recoveryPassword/**").permitAll()
-                .antMatchers("/user/profile","/user/changeProfile","/user/avatar",
-                        "/post/createNew","/post/update/**",
-                        "/vnpay/**").hasAnyRole(ADMIN.name(), USER.name())
+                        "/vnpay/payment-detail", "/confirm/**", "/sendEmail/**",
+                        "/recoveryPassword/**", "/paypal/**").permitAll()
+                .antMatchers("/user/profile", "/user/changeProfile", "/user/avatar",
+                        "/post/createNew", "/post/update/**",
+                        "/vnpay/**", "/paypal/create-payment").hasAnyRole(ADMIN.name(), USER.name())
                 .antMatchers("/admin/**").hasRole(ADMIN.name())
-                .antMatchers("/user/**","/feeling/**","/comment/**").hasRole(USER.name())
+                .antMatchers("/user/**", "/feeling/**", "/comment/**").hasRole(USER.name())
                 .anyRequest().authenticated()
                 .and().exceptionHandling().and().sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);

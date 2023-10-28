@@ -6,9 +6,13 @@ import com.example.demo.dto.order.OrderDTO;
 import com.example.demo.dto.payment.TransactionDTO;
 import com.example.demo.dto.payment.TransactionDetailDTO;
 import com.example.demo.dto.payment.VNPaymentRequestDTO;
+import com.example.demo.dto.user.ProfileDTO;
 import com.example.demo.entity.Order;
+import com.example.demo.entity.User;
+import com.example.demo.repository.OrderRepository;
 import com.example.demo.service.OrderService;
 import com.example.demo.service.PaymentService;
+import com.example.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -23,6 +27,8 @@ import java.util.*;
 public class PaymentServiceImpl implements PaymentService {
     @Autowired
     private OrderService orderService;
+    @Autowired
+    private UserService userService;
     @Override
     public Map<String, String> returnParamVnPay(VNPaymentRequestDTO paymentRequestDTO) {
         int amount = GlobalVariable.VN_Price * 100;
@@ -98,20 +104,25 @@ public class PaymentServiceImpl implements PaymentService {
             OrderDTO successOrder = orderService.changeStatusOrder(orderId,
                     GlobalVariable.ORDER_STATUS.PAYMENT_CONFIRM.name());
 
+            ProfileDTO newProfile = userService.changeTypeAccount(successOrder.getPayer().getUsername(),
+                    "Vip");
+
+            successOrder.setPayer(newProfile);
+
             TransactionDetailDTO detail = new TransactionDetailDTO();
-            detail.setAmount(request.getParameter("vnp_Amount"));
-            detail.setBankCode(request.getParameter("vnp_BankCode"));
+            detail.setAmount(request.getParameter("vnp_Amount") + VNPayConfig.CURRCODE);
+            //detail.setBankCode(request.getParameter("vnp_BankCode"));
             detail.setDescription(request.getParameter("vnp_OrderInfo"));
             detail.setPayDate(request.getParameter("vnp_PayDate"));
             detail.setOrder(successOrder);
-            detail.setCardType(request.getParameter("vnp_CardType"));
+            //detail.setCardType(request.getParameter("vnp_CardType"));
 
             transactionDTO.setDetail(detail);
 
 
         } else {
 
-            OrderDTO successOrder = orderService.changeStatusOrder(orderId,
+            OrderDTO failOrder = orderService.changeStatusOrder(orderId,
                     GlobalVariable.ORDER_STATUS.CANCELED.name());
             transactionDTO.setStatus("NO");
             transactionDTO.setMessage("Failed");

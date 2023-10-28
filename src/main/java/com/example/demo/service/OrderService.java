@@ -6,6 +6,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 public interface OrderService {
-    Order orderCreator(String username, String paymentType);
+    Order orderCreator(String username, String paymentType, String price);
     OrderDTO changeStatusOrder(long id, String status);
 }

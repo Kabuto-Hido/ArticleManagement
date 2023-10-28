@@ -24,7 +24,7 @@ public class OrderServiceImpl implements OrderService {
     private UserRepository userRepository;
 
     @Override
-    public Order orderCreator(String username, String paymentType) {
+    public Order orderCreator(String username, String paymentType, String price) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() ->
                         new NotFoundException("Cannot found user with username = " + username));
@@ -32,12 +32,12 @@ public class OrderServiceImpl implements OrderService {
         Order newOrder = new Order(
                 GlobalVariable.ORDER_STATUS.PENDING.toString(),
                 paymentType,
-                ((long) GlobalVariable.VN_Price),
+                Long.parseLong(price),
                 user
         );
         List<OrderDetail> orderDetailList = new ArrayList<>();
         orderDetailList.add(new OrderDetail(
-                (long) GlobalVariable.VN_Price,
+                Long.parseLong(price),
                 1L,
                 "Upgrade to VIP account",
                 newOrder

@@ -11,9 +11,9 @@ import lombok.*;
 public class TransactionDetailDTO {
     private OrderDTO order;
     private String amount;
-    private String bankCode;
+    //private String bankCode;
     private String description;
-    private String cardType;
+    //private String cardType;
     private String payDate;
 
 }

@@ -9,6 +9,7 @@ public class JwtConfig {
     private String secretKey;
     private String tokenPrefix;
     private Integer tokenExpirationAfterDays;
+    private Integer tokenExpirationAfterMinutes;
 
     public Integer getTokenExpirationAfterMinutes() {
         return tokenExpirationAfterMinutes;
@@ -17,8 +18,6 @@ public class JwtConfig {
     public void setTokenExpirationAfterMinutes(Integer tokenExpirationAfterMinutes) {
         this.tokenExpirationAfterMinutes = tokenExpirationAfterMinutes;
     }
-
-    private Integer tokenExpirationAfterMinutes;
 
     public JwtConfig() {
     }

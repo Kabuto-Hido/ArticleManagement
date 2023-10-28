@@ -29,7 +29,7 @@ public class VNPayController {
     public ResponseEntity<?> createPaymentVnPay(@RequestBody VNPaymentRequestDTO paymentRequestDTO) throws UnsupportedEncodingException {
         String username = ApplicationUserService.GetUsernameLoggedIn();
         Order order = orderService.orderCreator(username,
-                GlobalVariable.PAYMENT_TYPE.VN_PAY.name());
+                GlobalVariable.PAYMENT_TYPE.VN_PAY.name(), String.valueOf(GlobalVariable.VN_Price));
         paymentRequestDTO.setOrderId(order.getId());
 
         Map<String, String> vnp_Params = paymentService.returnParamVnPay(paymentRequestDTO);

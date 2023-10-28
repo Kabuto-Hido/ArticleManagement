@@ -126,6 +126,12 @@
 			<artifactId>jaxb-api</artifactId>
 			<scope>runtime</scope>
 		</dependency>
+<!--	paypal-->
+		<dependency>
+			<groupId>com.paypal.sdk</groupId>
+			<artifactId>rest-api-sdk</artifactId>
+			<version>1.13.1</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
