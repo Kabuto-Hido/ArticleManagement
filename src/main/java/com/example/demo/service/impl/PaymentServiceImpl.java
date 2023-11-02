@@ -1,5 +1,6 @@
 package com.example.demo.service.impl;
 
+import com.example.demo.config.EmailTemplate;
 import com.example.demo.config.GlobalVariable;
 import com.example.demo.config.VNPayConfig;
 import com.example.demo.dto.order.OrderDTO;
@@ -7,16 +8,16 @@ import com.example.demo.dto.payment.TransactionDTO;
 import com.example.demo.dto.payment.TransactionDetailDTO;
 import com.example.demo.dto.payment.VNPaymentRequestDTO;
 import com.example.demo.dto.user.ProfileDTO;
-import com.example.demo.entity.Order;
-import com.example.demo.entity.User;
-import com.example.demo.repository.OrderRepository;
+import com.example.demo.service.EmailService;
 import com.example.demo.service.OrderService;
 import com.example.demo.service.PaymentService;
 import com.example.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -29,6 +30,9 @@ public class PaymentServiceImpl implements PaymentService {
     private OrderService orderService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private EmailService emailService;
+
     @Override
     public Map<String, String> returnParamVnPay(VNPaymentRequestDTO paymentRequestDTO) {
         int amount = GlobalVariable.VN_Price * 100;
@@ -110,7 +114,8 @@ public class PaymentServiceImpl implements PaymentService {
             successOrder.setPayer(newProfile);
 
             TransactionDetailDTO detail = new TransactionDetailDTO();
-            detail.setAmount(request.getParameter("vnp_Amount") + VNPayConfig.CURRCODE);
+            int returnAmount = Integer.parseInt(request.getParameter("vnp_Amount")) / 100;
+            detail.setAmount(returnAmount + " " + VNPayConfig.CURRCODE);
             //detail.setBankCode(request.getParameter("vnp_BankCode"));
             detail.setDescription(request.getParameter("vnp_OrderInfo"));
             detail.setPayDate(request.getParameter("vnp_PayDate"));
@@ -118,6 +123,18 @@ public class PaymentServiceImpl implements PaymentService {
             //detail.setCardType(request.getParameter("vnp_CardType"));
 
             transactionDTO.setDetail(detail);
+
+            try {
+                emailService.sendAsHTML(newProfile.getEmail(),
+                        "Thank you for signing up for our VIP membership",
+                        EmailTemplate.TemplateInvoice(
+                                orderId, newProfile.getUsername(),
+                                newProfile.getEmail(), GlobalVariable.PAYMENT_TYPE.VN_PAY.name(),
+                                GlobalVariable.convertTimeStampToDate(request.getParameter("vnp_PayDate")),
+                                "VIP MemberShip", detail.getAmount()));
+            } catch (MessagingException | IOException e) {
+                throw new RuntimeException(e);
+            }
 
 
         } else {

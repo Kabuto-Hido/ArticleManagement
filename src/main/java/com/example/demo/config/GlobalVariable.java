@@ -1,6 +1,10 @@
 package com.example.demo.config;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Random;
+import java.util.TimeZone;
 
 public class GlobalVariable {
     public static final String DEFAULT_PAGE = "1";
@@ -29,4 +33,17 @@ public class GlobalVariable {
         return String.format("%06d", new Random().nextInt(999999));
     }
 
+    public static String convertTimeStampToDate(String timeStamp){
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
+        SimpleDateFormat formatter2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+        Date d = null;
+        try {
+            d = formatter.parse(timeStamp);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return formatter2.format(d);
+    }
 }

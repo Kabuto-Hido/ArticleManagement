@@ -1,20 +1,5 @@
 package com.example.demo.config;
 
-import com.paypal.base.rest.APIContext;
-import com.paypal.base.rest.OAuthTokenCredential;
-import com.paypal.base.rest.PayPalRESTException;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.stereotype.Component;
-
-import java.util.HashMap;
-import java.util.Map;
-
 public class PayPalConfig {
     public static final String CLIENTID = "AZ6sHQ6Aw-3jT7ATY0KFd61PWx-TAnDvOYfuiSer-wCWfnG0FTs1g1W1qCOlnSy6FDpZWu4gf9jNv2Wz";
     public static final String CLIENTSECRET = "ELjWAK8gPTEf_z5ZuiT4paVg4hfv3rJm169cAd2vZfGTwf7jfAvlUTL8sR0x6RufULlPPIjNIPfuxauZ";
@@ -30,8 +15,7 @@ public class PayPalConfig {
     public enum paypalPaymentMethod {
         CREDIT_CARD, PAYPAL
     }
-
-//    public static Map<String, String> paypalSdkConfig() {
+    //    public static Map<String, String> paypalSdkConfig() {
 //        Map<String, String> configMap = new HashMap<>();
 //        configMap.put("mode", MODE);
 //        return configMap;

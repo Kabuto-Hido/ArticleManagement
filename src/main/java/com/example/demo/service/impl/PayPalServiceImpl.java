@@ -1,11 +1,13 @@
 package com.example.demo.service.impl;
 
+import com.example.demo.config.EmailTemplate;
 import com.example.demo.config.GlobalVariable;
 import com.example.demo.config.PayPalConfig;
 import com.example.demo.dto.order.OrderDTO;
 import com.example.demo.dto.payment.TransactionDTO;
 import com.example.demo.dto.payment.TransactionDetailDTO;
 import com.example.demo.dto.user.ProfileDTO;
+import com.example.demo.service.EmailService;
 import com.example.demo.service.OrderService;
 import com.example.demo.service.PayPalService;
 import com.example.demo.service.UserService;
@@ -15,6 +17,8 @@ import com.paypal.base.rest.PayPalRESTException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.mail.MessagingException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,8 +29,10 @@ public class PayPalServiceImpl implements PayPalService {
     private OrderService orderService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private EmailService emailService;
     private APIContext context = new APIContext(PayPalConfig.CLIENTID,
-            PayPalConfig.CLIENTSECRET,PayPalConfig.MODE);
+            PayPalConfig.CLIENTSECRET, PayPalConfig.MODE);
 
     @Override
     public Payment createPayment(long orderId, String total) throws PayPalRESTException {
@@ -73,7 +79,6 @@ public class PayPalServiceImpl implements PayPalService {
         TransactionDTO transactionDTO = new TransactionDTO();
         List<Transaction> transactions = payment.getTransactions();
         long orderId = Long.parseLong(transactions.get(0).getInvoiceNumber());
-        System.out.println(orderId);
 
         if (payment.getState().equals("approved")) {
             transactionDTO.setStatus("OK");
@@ -94,8 +99,19 @@ public class PayPalServiceImpl implements PayPalService {
             detail.setOrder(successOrder);
 
             transactionDTO.setDetail(detail);
-        }
-        else{
+
+            try {
+                emailService.sendAsHTML(newProfile.getEmail(),
+                        "Thank you for signing up for our VIP membership",
+                        EmailTemplate.TemplateInvoice(
+                                orderId, newProfile.getUsername(),
+                                newProfile.getEmail(), GlobalVariable.PAYMENT_TYPE.PAYPAL.name(),
+                                successOrder.getCreatedDate().toString(),
+                                "VIP MemberShip", detail.getAmount()));
+            } catch (MessagingException | IOException e) {
+                throw new RuntimeException(e);
+            }
+        } else {
             OrderDTO failOrder = orderService.changeStatusOrder(orderId,
                     GlobalVariable.ORDER_STATUS.CANCELED.name());
             transactionDTO.setStatus("NO");
