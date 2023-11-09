@@ -93,6 +93,9 @@ public class PaymentServiceImpl implements PaymentService {
         String vnp_SecureHash = VNPayConfig.hmacSHA512(VNPayConfig.CHECKSUM, hashData.toString());
         String queryUrl = query + "&vnp_SecureHash=" + vnp_SecureHash;
 
+        orderService.changeStatusOrder(Long.parseLong(vnp_Params.get("vnp_TxnRef")),
+                GlobalVariable.ORDER_STATUS.PAYMENT_CONFIRM.name());
+
         return VNPayConfig.VNPAYURL + "?" + queryUrl;
     }
 
@@ -106,7 +109,7 @@ public class PaymentServiceImpl implements PaymentService {
             transactionDTO.setMessage("Successfully");
 
             OrderDTO successOrder = orderService.changeStatusOrder(orderId,
-                    GlobalVariable.ORDER_STATUS.PAYMENT_CONFIRM.name());
+                    GlobalVariable.ORDER_STATUS.DONE.name());
 
             ProfileDTO newProfile = userService.changeTypeAccount(successOrder.getPayer().getUsername(),
                     "Vip");

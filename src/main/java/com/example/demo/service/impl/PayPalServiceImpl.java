@@ -62,6 +62,9 @@ public class PayPalServiceImpl implements PayPalService {
         redirectUrls.setReturnUrl(PayPalConfig.SUCCESS_URL);
         payment.setRedirectUrls(redirectUrls);
 
+        orderService.changeStatusOrder(orderId,
+                GlobalVariable.ORDER_STATUS.PAYMENT_CONFIRM.name());
+
         return payment.create(context);
     }
 
@@ -85,7 +88,7 @@ public class PayPalServiceImpl implements PayPalService {
             transactionDTO.setMessage("Successfully");
 
             OrderDTO successOrder = orderService.changeStatusOrder(orderId,
-                    GlobalVariable.ORDER_STATUS.PAYMENT_CONFIRM.name());
+                    GlobalVariable.ORDER_STATUS.DONE.name());
 
             ProfileDTO newProfile = userService.changeTypeAccount(successOrder.getPayer().getUsername(),
                     "Vip");

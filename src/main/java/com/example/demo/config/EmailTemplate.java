@@ -145,7 +145,7 @@ public class EmailTemplate {
 
     public static String TemplateInvoice(long orderId, String customerName, String email, String paymentMethod,
                                          String createdDate, String des, String amount) throws IOException {
-        String header = new String(Files.readAllBytes(Paths.get("D:\\intelliJ\\ArticleManagement\\src\\main\\java\\com\\example\\demo\\file\\TemplateInvoice.txt")));
+        String header = new String(Files.readAllBytes(Paths.get("src\\main\\java\\com\\example\\demo\\file\\TemplateInvoice.txt")));
         return header + "\n" + "<body style=\"word-spacing: normal; background-color: rgb(235, 234, 238); opacity: 1; visibility: visible; animation: auto ease 0s 1 normal none running none;\"\n" +
                 "        class=\"amp-mode-mouse\">\n" +
                 "        <div\n" +

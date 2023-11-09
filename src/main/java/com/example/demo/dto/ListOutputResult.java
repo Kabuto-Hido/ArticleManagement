@@ -16,6 +16,6 @@ public class ListOutputResult {
     private long totalPage;
     private Long previousPage;
     private Long nextPage;
-    private List<?> List;
+    private List<?> result;
 
 }

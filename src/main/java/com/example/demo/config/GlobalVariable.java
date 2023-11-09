@@ -2,14 +2,13 @@ package com.example.demo.config;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Random;
-import java.util.TimeZone;
+import java.util.*;
 
 public class GlobalVariable {
     public static final String DEFAULT_PAGE = "1";
     public static final String DEFAULT_LIMIT_USER = "10";
     public static final String DEFAULT_LIMIT_SEARCH = "20";
+    public static final String DEFAULT_LIMIT_COMMENT = "5";
     public static final String CSV_TYPE = "text/csv";
     public static final int VN_Price = 50000;
 

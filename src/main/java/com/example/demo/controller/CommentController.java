@@ -17,9 +17,9 @@ public class CommentController {
     private CommentService commentService;
 
     @PostMapping("/comment/createNew")
-    public ResponseEntity<?> addCommentToPost(@RequestBody CommentRequest model){
+    public ResponseEntity<?> addCommentToPost(@RequestBody CommentRequest model) {
         String username = ApplicationUserService.GetUsernameLoggedIn();
-        if(commentService.save(model, username) != null) {
+        if (commentService.save(model, username) != null) {
             return ResponseEntity.ok(new SuccessResponseDTO(
                     HttpStatus.OK,
                     "Create comment successful"));
@@ -29,19 +29,34 @@ public class CommentController {
     }
 
     @PutMapping("/comment/edit/{id}")
-    public ResponseEntity<?> editComment(@RequestBody CommentRequest model, @PathVariable long id){
+    public ResponseEntity<?> editComment(@RequestBody CommentRequest model, @PathVariable long id) {
         String username = ApplicationUserService.GetUsernameLoggedIn();
         model.setId(id);
-        return ResponseEntity.ok(commentService.save(model,username));
+        return ResponseEntity.ok(commentService.save(model, username));
     }
 
     @GetMapping("/comment/get-all")
-    public ResponseEntity<?> getByPostId(@RequestParam long postId){
-        return ResponseEntity.ok(commentService.getByPostId(postId));
+    public ResponseEntity<?> getByPostId(@RequestParam long postId,
+                                         @RequestParam Boolean paging,
+                                         @RequestParam(required = false) String page,
+                                         @RequestParam(required = false) String limit) {
+        if(paging){
+            return ResponseEntity.ok(commentService.getPagingByPostId(postId, page, limit));
+        }else{
+            return ResponseEntity.ok(commentService.getByPostId(postId));
+        }
     }
 
     @GetMapping("/comment/getBy")
-    public ResponseEntity<?> getByParentId(@RequestParam long parentId){
-        return ResponseEntity.ok(commentService.getByParentId(parentId));
+    public ResponseEntity<?> getByParentId(@RequestParam long parentId,
+                                           @RequestParam Boolean paging,
+                                           @RequestParam(required = false) String page,
+                                           @RequestParam(required = false) String limit) {
+        if(paging){
+            return ResponseEntity.ok(commentService.getPagingByParentId(parentId, page, limit));
+        }else{
+            return ResponseEntity.ok(commentService.getByParentId(parentId));
+        }
+
     }
 }

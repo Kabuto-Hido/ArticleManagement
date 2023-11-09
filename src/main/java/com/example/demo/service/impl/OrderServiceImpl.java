@@ -1,9 +1,11 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.config.GlobalVariable;
+import com.example.demo.dto.ListOutputResult;
 import com.example.demo.dto.order.OrderDTO;
 import com.example.demo.entity.Order;
 import com.example.demo.entity.OrderDetail;
+import com.example.demo.entity.Post;
 import com.example.demo.entity.User;
 import com.example.demo.exception.NotFoundException;
 import com.example.demo.mapper.OrderMapper;
@@ -11,6 +13,10 @@ import com.example.demo.repository.OrderRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -61,5 +67,56 @@ public class OrderServiceImpl implements OrderService {
             orderRepository.save(order);
         }
         return OrderMapper.toDto(order);
+    }
+
+    @Override
+    public ListOutputResult getAllOrder(String status, String page, String limit) {
+        Pageable pageable = preparePaging(page,limit);
+        Page<Order> orders;
+        if(status == null){
+            orders = orderRepository.findAll(pageable);
+        }
+        else {
+            orders = orderRepository.findAllByStatus(status, pageable);
+        }
+        return resultPaging(orders);
+    }
+    private Boolean isNumber(String s) {
+        try {
+            Long.parseLong(s);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+    private Boolean isValidNumber(String num) {
+        return num != null && !num.isEmpty() && isNumber(num) && Long.parseLong(num) >= 0;
+    }
+    public Pageable preparePaging(String page, String limit){
+        limit = isValidNumber(limit) ? limit : GlobalVariable.DEFAULT_LIMIT_SEARCH;
+        page = isValidNumber(page) ? page : GlobalVariable.DEFAULT_PAGE;
+        return PageRequest.of((Integer.parseInt(page) - 1),Integer.parseInt(limit),
+                Sort.by(Sort.Direction.DESC, "createdDate"));
+    }
+    public ListOutputResult resultPaging(Page<Order> orders){
+        List<OrderDTO> postResponseDTOS = new ArrayList<>();
+        for (Order order : orders){
+            postResponseDTOS.add(OrderMapper.toDto(order));
+        }
+        ListOutputResult result = new ListOutputResult(0, 0, null,null,new ArrayList<>());
+
+        if (!orders.isEmpty()) {
+            result.setResult(postResponseDTOS);
+            result.setTotalPage(orders.getTotalPages());
+            result.setItemsNumber(orders.getTotalElements());
+
+            if(orders.hasNext()){
+                result.setNextPage((long) orders.nextPageable().getPageNumber() + 1);
+            }
+            if(orders.hasPrevious()){
+                result.setPreviousPage((long) orders.previousPageable().getPageNumber() + 1);
+            }
+        }
+        return result;
     }
 }

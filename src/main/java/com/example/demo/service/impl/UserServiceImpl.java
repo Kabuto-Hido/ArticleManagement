@@ -79,7 +79,7 @@ public class UserServiceImpl implements UserService {
     public ListOutputResult resultPaging(List<?> listUser, Page<User> users) {
         ListOutputResult result = new ListOutputResult(0, 0, null, null, new ArrayList<>());
         if (!listUser.isEmpty()) {
-            result.setList(listUser);
+            result.setResult(listUser);
             result.setTotalPage(users.getTotalPages());
             result.setItemsNumber(users.getTotalElements());
 

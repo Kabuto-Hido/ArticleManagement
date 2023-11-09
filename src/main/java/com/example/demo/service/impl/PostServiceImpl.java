@@ -239,7 +239,7 @@ public class PostServiceImpl implements PostService {
         }
         ListOutputResult result = new ListOutputResult(0, 0, null,null,new ArrayList<>());
         if (!posts.isEmpty()) {
-            result.setList(postResponseDTOS);
+            result.setResult(postResponseDTOS);
             result.setTotalPage(posts.getTotalPages());
             result.setItemsNumber(posts.getTotalElements());
 
@@ -251,7 +251,6 @@ public class PostServiceImpl implements PostService {
             }
         }
         return result;
-
     }
 
     public String prettyCount(Number number) {

@@ -10,13 +10,17 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class FiltersSpecificationServiceImpl<T> {
+    Map<String, String> mapEntity = new HashMap<String, String>() {{
+        put("user", "userId");
+        put("category", "categoryId");
+        put("post", "postId");
+        put("order", "orderId");
+        put("role", "userRole");
+    }};
     public Specification<T> getSearchSpecification(SearchCriteria searchCriteria) {
         return new Specification<T>() {
             @Override
@@ -28,11 +32,10 @@ public class FiltersSpecificationServiceImpl<T> {
     }
 
     public Specification<T> getSearchSpecification(List<SearchCriteria> searchCriterias) {
-
         return (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
-            for (SearchCriteria s : searchCriterias) {
 
+            for (SearchCriteria s : searchCriterias) {
                 switch (s.getOperation()) {
                     case LIKE:
                         Predicate like = criteriaBuilder.like(root.get(s.getFilterKey()), "%" + s.getValue() + "%");
@@ -95,11 +98,11 @@ public class FiltersSpecificationServiceImpl<T> {
                         predicates.add(between);
                         break;
                     case JOIN:
-                        Predicate join = criteriaBuilder.equal(root.join(s.getJoinTable()).get(s.getFilterKey()), s.getValue());
+                        Predicate join = criteriaBuilder.equal(root.join(mapEntity.get(s.getJoinTable())).get(s.getFilterKey()), s.getValue());
                         predicates.add(join);
                         break;
                     default:
-                        throw new IllegalStateException("Unexpected value");
+                        throw new IllegalStateException("Unexpected operation value");
                 }
 
 

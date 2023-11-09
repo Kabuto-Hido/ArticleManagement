@@ -81,7 +81,7 @@ public class CategoryServiceImpl implements CategoryService {
         if(!categories.isEmpty()) {
             long ItemsNumber = categories.getTotalElements();
             long totalPage = categories.getTotalPages();
-            result.setList(categoryDTOS);
+            result.setResult(categoryDTOS);
             result.setTotalPage(totalPage);
             result.setItemsNumber(ItemsNumber);
 
