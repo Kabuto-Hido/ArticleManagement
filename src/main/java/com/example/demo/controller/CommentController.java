@@ -10,8 +10,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@CrossOrigin
+@RequestMapping("/api/v1")
 public class CommentController {
-
     @Autowired
     private CommentService commentService;
 

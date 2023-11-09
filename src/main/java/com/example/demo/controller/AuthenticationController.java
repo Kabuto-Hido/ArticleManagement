@@ -27,7 +27,7 @@ import java.util.Set;
 
 @RestController
 @CrossOrigin
-@RequestMapping("")
+@RequestMapping("/api/v1")
 public class AuthenticationController {
     @Autowired
     private AuthenticationManager authenticationManager;

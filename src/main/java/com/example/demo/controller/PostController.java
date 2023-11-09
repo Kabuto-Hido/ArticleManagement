@@ -16,7 +16,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.text.ParseException;
 
 @RestController
-@Api
+@CrossOrigin
+@RequestMapping("/api/v1")
 public class PostController {
     @Autowired
     private PostService postService;

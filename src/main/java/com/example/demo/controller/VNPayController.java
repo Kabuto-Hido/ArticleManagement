@@ -18,7 +18,8 @@ import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/vnpay")
+@CrossOrigin
+@RequestMapping("/api/v1/vnpay")
 public class VNPayController {
     @Autowired
     private PaymentService paymentService;

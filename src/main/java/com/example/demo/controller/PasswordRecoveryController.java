@@ -16,7 +16,8 @@ import javax.mail.MessagingException;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/recoveryPassword")
+@CrossOrigin
+@RequestMapping("/api/v1/recoveryPassword")
 public class PasswordRecoveryController {
     @Autowired
     private EmailService emailService;

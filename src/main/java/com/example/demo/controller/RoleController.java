@@ -7,17 +7,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@CrossOrigin
+@RequestMapping("/api/v1/admin/role")
 public class RoleController {
-
     @Autowired
     private RoleService roleService;
 
-    @GetMapping("/admin/role/get-all")
+    @GetMapping("/get-all")
     public ResponseEntity<?> getAllRole(){
         return ResponseEntity.ok(roleService.getAllRole());
     }
 
-    @PostMapping("/admin/role/createNew")
+    @PostMapping("/createNew")
     public ResponseEntity<?> createNewRole(@RequestBody RoleDTO model){
         return ResponseEntity.ok(roleService.save(model));
     }

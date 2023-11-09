@@ -21,8 +21,9 @@ import java.io.IOException;
 import java.util.Objects;
 
 @RestController
+@CrossOrigin
+@RequestMapping("/api/v1")
 public class UserController {
-
     @Autowired
     private UserService userService;
     @Autowired

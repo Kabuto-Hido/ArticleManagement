@@ -20,7 +20,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/paypal")
+@CrossOrigin
+@RequestMapping("/api/v1/paypal")
 public class PayPalController {
     @Autowired
     private PayPalService payPalService;

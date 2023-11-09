@@ -52,21 +52,26 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable().authorizeRequests()
-                .antMatchers("/", "/register", "/login", "/category/**", "/post/**", "/test/**",
-                        "/comment/get-all", "/comment/getBy", "/user/search", "/v2/api-docs",
+                .antMatchers("/api/v1/", "/api/v1/register", "/api/v1/login",
+                        "/api/v1/category/**", "/api/v1/post/**", "/api/v1/test/**",
+                        "/api/v1/comment/get-all", "/api/v1/comment/getBy", "/api/v1/user/search",
+                        "/v2/api-docs",
                         "/swagger-resources",
                         "/swagger-resources/**",
                         "/configuration/ui",
                         "/configuration/security",
                         "/swagger-ui.html",
                         "/webjars/**",
-                        "/vnpay/payment-detail", "/confirm/**", "/sendEmail/**",
-                        "/recoveryPassword/**", "/paypal/**").permitAll()
-                .antMatchers("/user/profile", "/user/changeProfile", "/user/avatar",
-                        "/post/createNew", "/post/update/**",
-                        "/vnpay/**", "/paypal/create-payment").hasAnyRole(ADMIN.name(), USER.name())
-                .antMatchers("/admin/**").hasRole(ADMIN.name())
-                .antMatchers("/user/**", "/feeling/**", "/comment/**").hasRole(USER.name())
+                        "/api/v1/vnpay/payment-detail", "/api/v1/confirm/**", "/api/v1/sendEmail/**",
+                        "/api/v1/recoveryPassword/**", "/api/v1/paypal/**",
+                        "/api/v1/kafka/**").permitAll()
+                .antMatchers("/api/v1/user/profile", "/api/v1/user/changeProfile",
+                        "/api/v1/user/avatar", "/api/v1/post/createNew",
+                        "/api/v1/post/update/**", "/api/v1/vnpay/**",
+                        "/api/v1/paypal/create-payment").hasAnyRole(ADMIN.name(), USER.name())
+                .antMatchers("/api/v1/admin/**").hasRole(ADMIN.name())
+                .antMatchers("/api/v1/user/**", "/api/v1/feeling/**",
+                        "/api/v1/comment/**").hasRole(USER.name())
                 .anyRequest().authenticated()
                 .and().exceptionHandling().and().sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
