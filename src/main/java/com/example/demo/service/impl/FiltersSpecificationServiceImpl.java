@@ -38,8 +38,8 @@ public class FiltersSpecificationServiceImpl<T> {
             for (SearchCriteria s : searchCriterias) {
                 switch (s.getOperation()) {
                     case LIKE:
-                        Predicate like = criteriaBuilder.like(root.get(s.getFilterKey()), "%" + s.getValue() + "%");
-                        predicates.add(like);
+                        Predicate fullLike = criteriaBuilder.like(root.get(s.getFilterKey()), "%" + s.getValue() + "%");
+                        predicates.add(fullLike);
                         break;
                     case EQUAL:
                         Predicate equal = criteriaBuilder.equal(root.get(s.getFilterKey()), s.getValue());
